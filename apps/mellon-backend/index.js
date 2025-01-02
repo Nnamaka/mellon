@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send("Hello, Render from Express with CORS enabled!");
+  res.send("Hello Mellon, Render from Express with CORS enabled!");
 });
 
 const PORT = process.env.PORT || 3000;
