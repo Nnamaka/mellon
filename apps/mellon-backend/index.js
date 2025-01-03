@@ -7,10 +7,11 @@ const app = express();
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send("Hello Mellon, Render from Express with CORS enabled!");
+  res.send("Mellon backend is live 🚀");
 });
 
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
