@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bot,
   BookOpen,
@@ -12,9 +14,7 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
-// import { NavProjects } from "@/components/dashboard/nav-projects";
 import { NavMain } from "./nav-main";
-// import { NavSecondary } from "@/components/dashboard/nav-secondary";
 import { NavUser } from "@/components/dashboard/nav-user";
 import {
   Sidebar,
@@ -35,102 +35,27 @@ const data = {
   navMain: [
     {
       title: "Calender",
-      url: "#",
+      url: "/dashboard/calendar",
       icon: SquareTerminal,
       isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
     },
     {
       title: "Compose",
-      url: "#",
+      url: "/dashboard/compose",
       icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
     },
     {
       title: "Library",
-      url: "#",
+      url: "/dashboard/library",
       icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/dashboard/settings",
       icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
     },
   ],
-  //   navSecondary: [
-  //     {
-  //       title: "Support",
-  //       url: "#",
-  //       icon: LifeBuoy,
-  //     },
-  //     {
-  //       title: "Feedback",
-  //       url: "#",
-  //       icon: Send,
-  //     },
-  //   ],
+
   projects: [
     {
       name: "Calender",
@@ -155,7 +80,19 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  currentPath,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { currentPath: string }) {
+  const pathname = usePathname(); // Get the current path
+  const router = useRouter(); // Use the next/navigation router for navigation
+
+  useEffect(() => {
+    if (pathname === "/dashboard") {
+      router.push("/dashboard/calendar"); // Redirect to the default dashboard page
+    }
+  }, [pathname, router]);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -175,9 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        <NavMain items={data.navMain} currentPath={currentPath} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
