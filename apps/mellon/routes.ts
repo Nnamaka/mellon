@@ -8,7 +8,8 @@ export const publicRoutes = [
     "/",
     "/email-verification",
     "/reset-password",
-    '/password-reset-email-redirect'
+    '/password-reset-email-redirect',
+    '/api/auth/register',
 ]
 
 
@@ -17,9 +18,10 @@ export const publicRoutes = [
  * @type {string[]}
  */
 export const authRoutes = [
-    '/Login',
-    '/Signup',
+    '/login',
+    '/signup',
     '/api/users',
+    '/api/auth/register',
 ]
 
 /**
@@ -33,4 +35,4 @@ export const apiAuthPrefix = "/api/auth";
  * Default redirect path after login
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = '/home'
+export const DEFAULT_LOGIN_REDIRECT = '/login'

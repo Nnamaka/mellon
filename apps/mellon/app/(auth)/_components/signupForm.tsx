@@ -1,18 +1,53 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+"use client";
+
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({ ...prevForm, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message);
+        console.error("Registration problem");
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Registration error:", error);
+      setError("Something went wrong. Please try again");
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -20,10 +55,9 @@ export function SignUpForm({
           <CardTitle className="text-xl">Sign Up</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
-                
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -39,21 +73,32 @@ export function SignUpForm({
                   Or continue with
                 </span>
               </div>
+              <div>{error}</div>
               <div className="grid gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
+                    name="email"
                     placeholder="m@example.com"
+                    value={form.email}
+                    onChange={handleChange}
                     required
                   />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Password</Label>
                   </div>
-                  <Input id="password" type="password" required />
+                  <Input
+                    id="password"
+                    type="password"
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
                 <Button type="submit" className="w-full">
                   Sign Up
@@ -74,5 +119,5 @@ export function SignUpForm({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }
