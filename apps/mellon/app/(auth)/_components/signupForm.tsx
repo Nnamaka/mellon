@@ -27,6 +27,8 @@ export function SignUpForm({
     setError(null);
 
     try {
+      console.log(form);
+
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,14 +36,14 @@ export function SignUpForm({
       });
 
       const data = await res.json();
-
+      console.log("Response data:", data);
       if (!res.ok) {
         setError(data.message);
         console.error("Registration problem");
         return;
       }
 
-      router.push("/dashboard");
+      // router.push("/dashboard");
     } catch (error) {
       console.error("Registration error:", error);
       setError("Something went wrong. Please try again");

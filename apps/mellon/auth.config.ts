@@ -10,7 +10,10 @@ export default {
     Google,
     Credentials({
       authorize: async (credentials) => {
+        console.log("here");
+
         const validatedFields = LoginSchema.safeParse(credentials);
+        console.log("here");
 
         if (validatedFields.success) {
           const { email } = validatedFields.data;
