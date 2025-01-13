@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export function SignUpForm({
   className,
@@ -15,7 +16,7 @@ export function SignUpForm({
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
 
-  // const router = useRouter();
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,7 +44,17 @@ export function SignUpForm({
         return;
       }
 
-      // router.push("/dashboard");
+      const signInResponse = await signIn("credentials", {
+        redirect: false,
+        email: form.email,
+        password: form.password,
+      });
+
+      if (signInResponse?.ok) {
+        router.push("/dashboard/calendar");
+      } else {
+        setError("Login failed after registration.");
+      }
     } catch (error) {
       console.error("Registration error:", error);
       setError("Something went wrong. Please try again");

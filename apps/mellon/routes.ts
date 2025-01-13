@@ -10,6 +10,8 @@ export const publicRoutes = [
     "/reset-password",
     '/password-reset-email-redirect',
     '/api/auth/register',
+    '/dashboard',
+    '/dashboard/calendar',
 ]
 
 
@@ -35,4 +37,4 @@ export const apiAuthPrefix = "/api/auth";
  * Default redirect path after login
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = '/login'
+export const DEFAULT_LOGIN_REDIRECT = '/dashboard/calendar'

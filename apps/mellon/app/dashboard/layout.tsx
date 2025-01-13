@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -11,7 +12,20 @@ import {
 } from "@/components/ui/sidebar";
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      console.log(`user authenticated ${session}`);
+      router.push("/login");
+    }
+  }, [status, router, session]);
+
+  if (status === "loading") {
+    return <div>Loading...</div>; // Optional: Add a loading spinner
+  }
   return (
     <SidebarProvider>
       <AppSidebar currentPath={pathname} />
