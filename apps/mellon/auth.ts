@@ -8,15 +8,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ account }) {
       if (account?.provider !== "credentials") return true;
+      // const existingUser = await prisma.user.findUnique({ where: { email: user.email as string } });
 
+    
     //   const existingUser = await getUserById(user.id as string);
 
     //   if (!existingUser?.emailVerified) return false;
       // you can filter users who login/signup with google here
       return true;
     },
-    async jwt({ token }) {
-      if (!token.sub) return token;
+    async jwt({ token, user }) {
+      if (user) {
+        token.email = user.email; // Attach email to the JWT token
+      }
+      return token;
+
+      // if (!token.sub) return token;
 
     //   const existingUser = await getUserById(token.sub);
 
@@ -29,12 +36,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token}) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
+        session.user.email = token.email as string;
       }
 
-      if (token.role && session.user) {
-        // session.user.role = token.role as "admin" | "user";
-        console.log("nothing to see");
-      }
+      // if (token.role && session.user) {
+      //   // session.user.role = token.role as "admin" | "user";
+      //   console.log("nothing to see");
+      // }
       return session;
     },
   },

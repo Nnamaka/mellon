@@ -18,8 +18,10 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      console.log(`user authenticated ${session}`);
       router.push("/login");
+    } else {
+      console.log(`user authenticated ${session}`);
+      // console.log(session);
     }
   }, [status, router, session]);
 

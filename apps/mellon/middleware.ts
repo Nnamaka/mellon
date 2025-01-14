@@ -1,12 +1,13 @@
-import authConfig from '@/auth.config'
-import NextAuth from 'next-auth'
+import authConfig from "@/auth.config";
+import NextAuth from "next-auth";
 
-const {auth} = NextAuth(authConfig);
+const { auth } = NextAuth(authConfig);
 
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
   publicRoutes,
+  protectedRoutes,
   authRoutes,
 } from "@/routes";
 
@@ -16,17 +17,9 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  // const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-  const isPublicRoute = publicRoutes.some(route => {
-    if (route.includes('.+')) {
-      // Handle regex routes
-      const regex = new RegExp('^' + route.replace('.+', '.+') + '$');
-      return regex.test(nextUrl.pathname);
-    }
-    return route === nextUrl.pathname;
-  });
-  
+  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isProtectedRoute = protectedRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
     return;
@@ -40,10 +33,14 @@ export default auth((req) => {
     return;
   }
 
-  if(!isLoggedIn && !isPublicRoute){
-    return Response.redirect(new URL('login', nextUrl));
+  if (!isLoggedIn && !isPublicRoute) {
+    return Response.redirect(new URL("/", nextUrl));
   }
 
+  if (!isLoggedIn && isProtectedRoute) {
+    // Redirect to the login page if accessing protected routes without being logged in
+    return Response.redirect(new URL("/", nextUrl));
+  }
   return;
 });
 
@@ -53,5 +50,3 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
-
-

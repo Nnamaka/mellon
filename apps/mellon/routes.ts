@@ -10,11 +10,20 @@ export const publicRoutes = [
     "/reset-password",
     '/password-reset-email-redirect',
     '/api/auth/register',
+]
+/**
+ * Array of routes that are only accessible by logged In 
+ * users
+ * These routes require authentication
+ * @type {string[]}
+ */
+export const protectedRoutes = [
     '/dashboard',
     '/dashboard/calendar',
-]
-
-
+    '/dashboard/compose',
+    '/dashboard/library',
+    '/dashboard/settings',
+  ];
 /**
  * This array of routes are used for authentication
  * @type {string[]}
