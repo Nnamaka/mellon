@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { Loader } from "lucide-react";
 
 export function SignUpForm({
   className,
@@ -15,6 +16,7 @@ export function SignUpForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -26,10 +28,9 @@ export function SignUpForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
-      console.log(form);
-
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -37,9 +38,11 @@ export function SignUpForm({
       });
 
       const data = await res.json();
+
       console.log("Response data:", data);
       if (!res.ok) {
         setError(data.message);
+        setLoading(false);
         console.error("Registration problem");
         return;
       }
@@ -54,10 +57,14 @@ export function SignUpForm({
         router.push("/dashboard/calendar");
       } else {
         setError("Login failed after registration.");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Registration error:", error);
       setError("Something went wrong. Please try again");
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,7 +93,11 @@ export function SignUpForm({
                   Or continue with
                 </span>
               </div>
-              <div>{error}</div>
+              {error && (
+                <div className="rounded-lg py-2 px-2 text-[13px] bg-red-200 text-red-600 text-center inline-block ">
+                  {error}
+                </div>
+              )}
               <div className="grid gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -94,7 +105,6 @@ export function SignUpForm({
                     id="email"
                     type="email"
                     name="email"
-                    placeholder="m@example.com"
                     value={form.email}
                     onChange={handleChange}
                     required
@@ -114,7 +124,11 @@ export function SignUpForm({
                   />
                 </div>
                 <Button type="submit" className="w-full">
-                  Sign Up
+                  {loading ? (
+                    <Loader className="animate-spin  mx-auto" />
+                  ) : (
+                    "Sign Up"
+                  )}
                 </Button>
               </div>
               <div className="text-center text-sm">

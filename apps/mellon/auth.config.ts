@@ -19,18 +19,14 @@ export default {
           const user = await prisma.user.findUnique({ where: { email } });
 
           if (!user) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = await prisma.user.create({
-              data: { email, passwordHash: hashedPassword },
-            });
-
-            return { id: newUser.id, email: newUser.email };
+            throw new Error("Invalid Credentials");
           }
 
           const passwordMatch = await bcrypt.compare(
             password,
             user.passwordHash
           );
+
           if (!passwordMatch) throw new Error("Invalid Credentials");
 
           return { id: user.id, email: user.email };
