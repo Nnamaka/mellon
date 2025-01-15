@@ -21,13 +21,9 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
       router.push("/login");
     } else {
       console.log(`user authenticated ${session}`);
-      // console.log(session);
     }
   }, [status, router, session]);
 
-  if (status === "loading") {
-    return <div>Loading...</div>; // Optional: Add a loading spinner
-  }
   return (
     <SidebarProvider>
       <AppSidebar currentPath={pathname} />

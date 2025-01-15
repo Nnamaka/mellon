@@ -1,9 +1,9 @@
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-// import { getUserByEmail } from "@/actions/dbUtils";
+import { getUserByEmail } from "@/actions/dbUtils";
 import type { NextAuthConfig } from "next-auth";
 import { LoginSchema } from "@/schemas";
-import { prisma } from "./lib/db";
+// import { prisma } from "./lib/db";
 import bcrypt from "bcryptjs";
 
 export default {
@@ -16,11 +16,13 @@ export default {
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
 
-          const user = await prisma.user.findUnique({ where: { email } });
+          const user = await getUserByEmail(email);
 
           if (!user) {
             throw new Error("Invalid Credentials");
           }
+
+          if (!user || !user.passwordHash) return null;
 
           const passwordMatch = await bcrypt.compare(
             password,
@@ -41,4 +43,5 @@ export default {
       },
     }),
   ],
+  // debug: true,
 } satisfies NextAuthConfig;
