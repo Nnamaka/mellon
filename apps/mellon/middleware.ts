@@ -17,31 +17,32 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isLoggedIn = !!req.auth;
 
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-    }
-    return;
+  if (isAuthRoute && isLoggedIn) {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
   
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+
+  if (isApiAuthRoute || isPublicRoute) {
+    return; // Allow access to public and API routes
+  }
+
+
   const isProtectedRoute = protectedRoutes.includes(nextUrl.pathname);
-
-  if (isApiAuthRoute) {
-    return;
+  if (isProtectedRoute && !isLoggedIn) {
+    return Response.redirect(new URL("/", nextUrl)); // Redirect to login (or any other route)
   }
 
+  // if (!isLoggedIn && !isPublicRoute) {
+  //   // return Response.redirect(new URL("/", nextUrl));
+  //   return;
+  // }
 
-  if (!isLoggedIn && !isPublicRoute) {
-    // return Response.redirect(new URL("/", nextUrl));
-    return;
-  }
-
-  if (!isLoggedIn && isProtectedRoute) {
-    // Redirect to the login page if accessing protected routes without being logged in
-    return Response.redirect(new URL("/", nextUrl));
-  }
+  // if (!isLoggedIn && isProtectedRoute) {
+  //   // Redirect to the login page if accessing protected routes without being logged in
+  //   return Response.redirect(new URL("/", nextUrl));
+  // }
   return;
 });
 
