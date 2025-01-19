@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { Separator } from "@/components/ui/separator";
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {
   SidebarInset,
   SidebarProvider,
