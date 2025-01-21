@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   Bot,
   BookOpen,
@@ -13,7 +14,6 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react";
-
 import { NavMain } from "./nav-main";
 import { NavUser } from "@/components/dashboard/nav-user";
 import {
@@ -25,6 +25,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
+type User = {
+  name: string;
+  email: string;
+  avatar: string;
+};
 
 const data = {
   user: {
@@ -86,12 +92,28 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & { currentPath: string }) {
   const pathname = usePathname(); // Get the current path
   const router = useRouter(); // Use the next/navigation router for navigation
+  const { data: session } = useSession();
+  const [user, setUser] = useState<User>({
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  });
 
   useEffect(() => {
+    const getUserDetails = async () => {
+      setUser({
+        name: session?.user?.name || "Guest",
+        email: session?.user?.email || "",
+        avatar: session?.user?.image || "",
+      });
+    };
+
+    getUserDetails();
     if (pathname === "/dashboard") {
       router.push("/dashboard/calendar"); // Redirect to the default dashboard page
     }
-  }, [pathname, router]);
+  }, [pathname, router, session]);
+
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -115,7 +137,7 @@ export function AppSidebar({
         <NavMain items={data.navMain} currentPath={currentPath} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

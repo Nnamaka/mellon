@@ -16,11 +16,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // you can filter users who login/signup with google here
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, profile }) {
       if (user || account) {
         token.accessToken = account?.access_token;
         token.id = account?.id_token;
         token.email = user.email; // Attach email to the JWT token
+        token.picture = profile?.picture;
+        console.log("Account ✅", profile)
       }
       return token;
 
@@ -32,12 +34,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       //   token.role = existingUser.role;
 
-      return token;
+      // return token;
     },
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
         session.user.email = token.email as string;
+        session.user.image = token.picture;
+        console.log("INside session ✅", session.user.image)
       }
 
       // if (token.role && session.user) {
