@@ -13,7 +13,8 @@ function Calender() {
         localizer={localizer}
         startAccessor="start"
         endAccessor="end"
-        style={{height: 500}}
+        style={{height: 600}}
+        // style={{height:}}
       />
     </div>
   )
